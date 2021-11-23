@@ -6,7 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import com.example.filmescoroutines.R
+import com.example.filmescoroutines.service.repository.MainRepository
+import com.example.filmescoroutines.viewmodel.MainViewModel
+import kotlinx.android.synthetic.main.main_fragment.*
 
 class MainFragment : Fragment() {
 
@@ -25,8 +29,16 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        // TODO: Use the ViewModel
+
+        viewModel = ViewModelProvider(this,
+            MainViewModel.MainViewModelFactory(MainRepository())).get(MainViewModel::class.java)
+
+        viewModel.filmsLiveData.observe(viewLifecycleOwner, Observer{ films ->
+            textFilms.text = films[0].tittle
+        })
+
+        viewModel.getFilmsCoroutines()
+
     }
 
 }
